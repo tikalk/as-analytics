@@ -25,6 +25,8 @@ public class SegmentationBolt extends BaseBasicBolt {
 	
 	private long speedTheshold;
 	
+	
+	//Should use Redis order by ReadingTime
 	private final Map<Integer, List<String>> lastLocationsForAngels = new ConcurrentHashMap<>();
 
 	@Override
