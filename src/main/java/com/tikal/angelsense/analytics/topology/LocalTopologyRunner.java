@@ -4,10 +4,12 @@ import java.util.Properties;
 
 import com.tikal.angelsense.analytics.topology.bolts.GpsParserBolt;
 import com.tikal.angelsense.analytics.topology.bolts.SegmentationBolt;
+import com.tikal.angelsense.analytics.topology.spout.TextFileSpout;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.spout.SchemeAsMultiScheme;
+import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import storm.kafka.KafkaSpout;
@@ -28,6 +30,8 @@ public class LocalTopologyRunner {
 	final static String kafkaSegmentsTopicName="as-segments";
 	private static int speedTheshold = 5;
 	
+	private static String redisHost = "localhost";
+	
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LocalTopologyRunner.class);
 	public static void main(final String[] args) {
 		
@@ -44,22 +48,37 @@ public class LocalTopologyRunner {
 
 	private static TopologyBuilder buildTopolgy() {
 		
-		final SpoutConfig kafkaConfig = getSoutConfig();
-		kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+		
 
 		final Config segmentationConfig = new Config();
 		segmentationConfig.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, intervalWindow);
 		segmentationConfig.put("speedTheshold", speedTheshold );
+		segmentationConfig.put("redisHost", redisHost );
+		
 		
 		final TopologyBuilder builder = new TopologyBuilder();
 
-		builder.setSpout("gpsSpout", new KafkaSpout(kafkaConfig));
+//		builder.setSpout("gpsSpout", getKafkaSpout());
+		builder.setSpout("gpsSpout", getTextFileSpoutSpout());
 		builder.setBolt("gpsParserBolt", new GpsParserBolt()).shuffleGrouping("gpsSpout");
 		builder.setBolt("segmentation-bolt", new SegmentationBolt()).fieldsGrouping("gpsParserBolt",new Fields("angelId")).addConfigurations(segmentationConfig);
 		builder.setBolt("kafkaProducer",getKafkaBolt()).fieldsGrouping("segmentation-bolt",new Fields("angelId")).addConfigurations(getKafkaBoltConfig());
 		
 
 		return builder;
+	}
+
+	private static IRichSpout getTextFileSpoutSpout() {
+		final TextFileSpout textFileSpout = new TextFileSpout();
+		return textFileSpout;
+	}
+
+	private static IRichSpout getKafkaSpout() {
+		final SpoutConfig kafkaConfig = new SpoutConfig(new ZkHosts(zkHosts), kafkaGpsTopicName, "", "storm");
+		kafkaConfig.startOffsetTime=kafka.api.OffsetRequest.LatestTime();
+		kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+		final KafkaSpout kafkaSpout = new KafkaSpout(kafkaConfig);
+		return kafkaSpout;
 	}
 
 	private static KafkaBolt<String, String> getKafkaBolt() {
@@ -88,11 +107,11 @@ public class LocalTopologyRunner {
 //		});
 //	}
 
-	private static SpoutConfig getSoutConfig() {
-		final SpoutConfig kafkaConfig = new SpoutConfig(new ZkHosts(zkHosts), kafkaGpsTopicName, "", "storm");
-		kafkaConfig.startOffsetTime=kafka.api.OffsetRequest.LatestTime();
-		return kafkaConfig;
-	}
+//	private static SpoutConfig getSoutConfig() {
+//		final SpoutConfig kafkaConfig = new SpoutConfig(new ZkHosts(zkHosts), kafkaGpsTopicName, "", "storm");
+//		kafkaConfig.startOffsetTime=kafka.api.OffsetRequest.LatestTime();
+//		return kafkaConfig;
+//	}
 	
 	
 	private static Config getKafkaBoltConfig() {
