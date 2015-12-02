@@ -23,12 +23,12 @@ import storm.kafka.trident.TridentKafkaState;
 
 
 public class LocalTopologyRunner {
-	final static int intervalWindow = 2;
+//	final static int intervalWindow = 2;
 	
 	final static String zkHosts = "localhost";
 	final static String kafkaGpsTopicName="as-gps";
 	final static String kafkaSegmentsTopicName="as-segments";
-	private static int speedTheshold = 5;
+	private static int speedTheshold = 2;
 	
 	private static String redisHost = "localhost";
 	
@@ -51,7 +51,7 @@ public class LocalTopologyRunner {
 		
 
 		final Config segmentationConfig = new Config();
-		segmentationConfig.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, intervalWindow);
+//		segmentationConfig.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, intervalWindow);
 		segmentationConfig.put("speedTheshold", speedTheshold );
 		segmentationConfig.put("redisHost", redisHost );
 		

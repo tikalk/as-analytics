@@ -32,7 +32,7 @@ public class GpsParserBolt extends BaseBasicBolt {
 	public void execute(final Tuple tuple, final BasicOutputCollector outputCollector) {
 //		logger.info("Got:"+tuple);
 		final String str = tuple.getStringByField("str");
-//		System.out.println(str);
+		logger.info(str);
 		final JsonObject gps = new JsonParser().parse(str).getAsJsonObject();
 		outputCollector.emit(new Values(gps.get("angelId").getAsInt(),gps.toString()));
 		
