@@ -58,8 +58,8 @@ public class LocalTopologyRunner {
 		
 		final TopologyBuilder builder = new TopologyBuilder();
 
-//		builder.setSpout("gpsSpout", getKafkaSpout());
-		builder.setSpout("gpsSpout", getTextFileSpoutSpout());
+		builder.setSpout("gpsSpout", getKafkaSpout());
+//		builder.setSpout("gpsSpout", getTextFileSpoutSpout());
 		builder.setBolt("gpsParserBolt", new GpsParserBolt()).shuffleGrouping("gpsSpout");
 		builder.setBolt("segmentation-bolt", new SegmentationBolt()).fieldsGrouping("gpsParserBolt",new Fields("angelId")).addConfigurations(segmentationConfig);
 		builder.setBolt("kafkaProducer",getKafkaBolt()).fieldsGrouping("segmentation-bolt",new Fields("angelId")).addConfigurations(getKafkaBoltConfig());
@@ -87,33 +87,7 @@ public class LocalTopologyRunner {
 		.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("angelId","segment"));
 	}
 	
-//	private static KafkaBolt<String, String> getKafkaBolt() {
-//		return new KafkaBolt<String,String>()
-//		.withTopicSelector(new DefaultTopicSelector("locations-topic"))
-//		.withTupleToKafkaMapper(new TupleToKafkaMapper<String, String>() {			
-//			@Override
-//			public String getMessageFromTuple(final Tuple tuple) {
-//				try {
-//					final String key = "checkins-" +tuple.getLongByField("time-interval")+"@"+tuple.getStringByField("city");
-//					return key+"="+objectMapper.writeValueAsString(tuple.getValueByField("locationsList"));
-//				} catch (final IOException e) {
-//					throw new RuntimeException(e);
-//				}
-//			}			
-//			@Override
-//			public String getKeyFromTuple(final Tuple tuple) {
-//				return "checkins-" +tuple.getLongByField("time-interval")+"@"+tuple.getStringByField("city");				
-//			}
-//		});
-//	}
 
-//	private static SpoutConfig getSoutConfig() {
-//		final SpoutConfig kafkaConfig = new SpoutConfig(new ZkHosts(zkHosts), kafkaGpsTopicName, "", "storm");
-//		kafkaConfig.startOffsetTime=kafka.api.OffsetRequest.LatestTime();
-//		return kafkaConfig;
-//	}
-	
-	
 	private static Config getKafkaBoltConfig() {
 		final Config config = new Config();
 		final Properties props = new Properties();
