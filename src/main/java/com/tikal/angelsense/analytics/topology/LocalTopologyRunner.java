@@ -25,12 +25,13 @@ import storm.kafka.trident.TridentKafkaState;
 public class LocalTopologyRunner {
 //	final static int intervalWindow = 2;
 	
-	final static String zkHosts = "localhost";
-	final static String kafkaGpsTopicName="as-gps";
-	final static String kafkaSegmentsTopicName="as-segments";
-	private static int speedTheshold = 2;
+	private static final String kafka_brokers_lists = System.getProperty("kafka_brokers_lists");
+	private final static String zkHosts = System.getProperty("zkHosts");
+	private final static String kafkaGpsTopicName=System.getProperty("kafkaGpsTopicName");
+	private final static String kafkaSegmentsTopicName=System.getProperty("kafkaSegmentsTopicName");
+	private static int speedTheshold = Integer.valueOf(System.getProperty("speedTheshold"));
 	
-	private static String redisHost = "localhost";
+	private static String redisHost = System.getProperty("redisHost");
 	
 	private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(LocalTopologyRunner.class);
 	public static void main(final String[] args) {
@@ -91,7 +92,7 @@ public class LocalTopologyRunner {
 	private static Config getKafkaBoltConfig() {
 		final Config config = new Config();
 		final Properties props = new Properties();
-        props.put("metadata.broker.list", "localhost:9092");
+        props.put("metadata.broker.list", kafka_brokers_lists);
         props.put("request.required.acks", "1");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         config.put(TridentKafkaState.KAFKA_BROKER_PROPERTIES, props);

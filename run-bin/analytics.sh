@@ -1,9 +1,19 @@
 #!/bin/bash
 
-echo "Starting AngelsSense Analytics"
+export JAVA_OPTS="-Dkafka_brokers_lists=localhost:9092"
+export JAVA_OPTS="$JAVA_OPTS -DzkHosts=localhost"
+export JAVA_OPTS="$JAVA_OPTS -DkafkaGpsTopicName=as-gps"
+export JAVA_OPTS="$JAVA_OPTS -DkafkaSegmentsTopicName=as-segments"
+export JAVA_OPTS="$JAVA_OPTS -DredisHost=localhost"
+export JAVA_OPTS="$JAVA_OPTS -DspeedTheshold=2"
+
+echo "Starting AngelsSense Analytics with $JAVA_OPTS"
 
 DIRNAME=`dirname $0`
 APP_HOME=`cd $DIRNAME/..;pwd;`
 export APP_HOME;
 
-java -jar $APP_HOME/target/as-analytics-1.0.0-jar-with-dependencies.jar
+
+
+
+java $JAVA_OPTS -jar $APP_HOME/target/as-analytics-1.0.0-jar-with-dependencies.jar
