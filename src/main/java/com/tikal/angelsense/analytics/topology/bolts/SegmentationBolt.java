@@ -55,14 +55,15 @@ public class SegmentationBolt extends BaseBasicBolt {
 		}else{
 			if(currentSegment.get("segmentType").getAsString().equals(segmentType)){
 				//Should be the same segment -> Just update the last GPS and last time
-				currentSegment.add("endGps", gps);
 				currentSegment.addProperty("endTime", gps.get("readingTime").getAsLong());
+				currentSegment.addProperty("isNew", false);
 				currentSegments.put(angelId,currentSegment);
 				logger.info("Emit an update for existing segment segment for angel {}. segment is {}",angelId,currentSegment);
 				outputCollector.emit(new Values(angelId.toString(),currentSegment.toString()));
 			}else{
 				//We will close current segment, and create a new one
 				currentSegment.addProperty("isOpen", false);
+				currentSegment.addProperty("isNew", false);
 				logger.info("Closing a segment for angel {}. segment is {}",angelId,currentSegment);
 				outputCollector.emit(new Values(angelId.toString(),currentSegment.toString()));
 				
@@ -78,11 +79,10 @@ public class SegmentationBolt extends BaseBasicBolt {
 		JsonObject currentSegment;
 		currentSegment = new JsonObject();
 		currentSegment.addProperty("isOpen", true);
-		currentSegment.addProperty("id", UUID.randomUUID().toString());
+		currentSegment.addProperty("isNew", true);
+		currentSegment.addProperty("_id", UUID.randomUUID().toString());
 		currentSegment.addProperty("angelId", angelId);
-		currentSegment.add("startGps", gps);
 		currentSegment.addProperty("startTime", gps.get("readingTime").getAsLong());
-		currentSegment.add("endGps", gps);
 		currentSegment.addProperty("endTime", gps.get("readingTime").getAsLong());
 		currentSegment.addProperty("segmentType", segmentType);
 		return currentSegment;
