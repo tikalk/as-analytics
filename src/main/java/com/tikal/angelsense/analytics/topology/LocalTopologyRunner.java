@@ -3,6 +3,7 @@ package com.tikal.angelsense.analytics.topology;
 import java.util.Properties;
 
 import com.tikal.angelsense.analytics.topology.bolts.GpsParserBolt;
+import com.tikal.angelsense.analytics.topology.bolts.RevGeocodeBolt;
 import com.tikal.angelsense.analytics.topology.bolts.SegmentationBolt;
 import com.tikal.angelsense.analytics.topology.spout.TextFileSpout;
 
@@ -29,6 +30,7 @@ public class LocalTopologyRunner {
 	private final static String zkHosts = System.getProperty("zkHosts");
 	private final static String kafkaGpsTopicName=System.getProperty("kafkaGpsTopicName");
 	private final static String kafkaSegmentsTopicName=System.getProperty("kafkaSegmentsTopicName");
+	private final static String geoCoderUrl = System.getProperty("geoCoderUrl");
 	private static int speedTheshold = Integer.valueOf(System.getProperty("speedTheshold"));
 	
 	private static String redisHost = System.getProperty("redisHost");
@@ -55,6 +57,8 @@ public class LocalTopologyRunner {
 //		segmentationConfig.put(Config.TOPOLOGY_TICK_TUPLE_FREQ_SECS, intervalWindow);
 		segmentationConfig.put("speedTheshold", speedTheshold );
 		segmentationConfig.put("redisHost", redisHost );
+		segmentationConfig.put("geoCoderUrl", geoCoderUrl );
+		
 		
 		
 		final TopologyBuilder builder = new TopologyBuilder();
@@ -63,7 +67,8 @@ public class LocalTopologyRunner {
 //		builder.setSpout("gpsSpout", getTextFileSpoutSpout());
 		builder.setBolt("gpsParserBolt", new GpsParserBolt()).shuffleGrouping("gpsSpout");
 		builder.setBolt("segmentation-bolt", new SegmentationBolt()).fieldsGrouping("gpsParserBolt",new Fields("angelId")).addConfigurations(segmentationConfig);
-		builder.setBolt("kafkaProducer",getKafkaBolt()).fieldsGrouping("segmentation-bolt",new Fields("angelId")).addConfigurations(getKafkaBoltConfig());
+		builder.setBolt("reverse-geocode-bolt", new RevGeocodeBolt()).fieldsGrouping("segmentation-bolt",new Fields("angelId")).addConfigurations(segmentationConfig);		
+		builder.setBolt("kafkaProducer",getKafkaBolt()).fieldsGrouping("reverse-geocode-bolt",new Fields("angelId")).addConfigurations(getKafkaBoltConfig());
 		
 
 		return builder;

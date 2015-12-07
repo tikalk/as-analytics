@@ -6,6 +6,7 @@ export JAVA_OPTS="$JAVA_OPTS -DkafkaGpsTopicName=as-gps"
 export JAVA_OPTS="$JAVA_OPTS -DkafkaSegmentsTopicName=as-segments"
 export JAVA_OPTS="$JAVA_OPTS -DredisHost=localhost"
 export JAVA_OPTS="$JAVA_OPTS -DspeedTheshold=2"
+export JAVA_OPTS="$JAVA_OPTS -DgeoCoderUrl=http://localhost:7080/api/v1/address"
 
 echo "Starting AngelsSense Analytics with $JAVA_OPTS"
 
