@@ -1,4 +1,4 @@
-package com.tikal.angelsense.analytics.topology.bolts;
+package com.tikal.fleettracker.analytics.topology.bolts;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class RevGeocodeBolt extends BaseBasicBolt {
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer fieldsDeclarer) {
-		fieldsDeclarer.declare(new Fields("angelId","segment"));
+		fieldsDeclarer.declare(new Fields("vehicleId","segment"));
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class RevGeocodeBolt extends BaseBasicBolt {
 	
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector outputCollector) {
-		final Integer angelId = tuple.getIntegerByField("angelId");
+		final Integer vehicleId = tuple.getIntegerByField("vehicleId");
 		final JsonObject segment = new JsonParser().parse(tuple.getStringByField("segment")).getAsJsonObject();
 		
 		if(segment.get("segmentType").getAsString().equals("place") && 
@@ -47,7 +47,7 @@ public class RevGeocodeBolt extends BaseBasicBolt {
 		}
 		
 		logger.info("Emit to Kafka the segment with address. Segment is now {}",segment);
-		outputCollector.emit(new Values(angelId.toString(),segment.toString()));
+		outputCollector.emit(new Values(vehicleId.toString(),segment.toString()));
 		
 	}
 	

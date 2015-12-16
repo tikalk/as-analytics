@@ -1,4 +1,4 @@
-package com.tikal.angelsense.analytics.utils;
+package com.tikal.fleettracker.analytics.utils;
 
 
 /*::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/

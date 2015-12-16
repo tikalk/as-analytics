@@ -1,4 +1,4 @@
-package com.tikal.angelsense.analytics.topology.bolts;
+package com.tikal.fleettracker.analytics.topology.bolts;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class SegmentationBolt extends BaseBasicBolt {
 	
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer fieldsDeclarer) {
-		fieldsDeclarer.declare(new Fields("angelId","segment"));
+		fieldsDeclarer.declare(new Fields("vehicleId","segment"));
 	}
 
 	@Override
@@ -37,47 +37,47 @@ public class SegmentationBolt extends BaseBasicBolt {
 
 	@Override
 	public void execute(final Tuple tuple, final BasicOutputCollector outputCollector) {
-		final Integer angelId = tuple.getIntegerByField("angelId");
+		final Integer vehicleId = tuple.getIntegerByField("vehicleId");
 		final JsonObject gps = new JsonParser().parse(tuple.getStringByField("gps")).getAsJsonObject();
 		final String segmentType = gps.get("speed").getAsInt()>speedTheshold?"transit":"place";
-		JsonObject currentSegment = currentSegments.get(angelId);
+		JsonObject currentSegment = currentSegments.get(vehicleId);
 		if(currentSegment==null){
-			currentSegment = buildSegment(angelId, gps, segmentType);
-			currentSegments.put(angelId,currentSegment);
-			logger.info("Emit the first segment for angel {}. segment is {}",angelId,currentSegment);
-			outputCollector.emit(new Values(angelId,currentSegment.toString()));
+			currentSegment = buildSegment(vehicleId, gps, segmentType);
+			currentSegments.put(vehicleId,currentSegment);
+			logger.info("Emit the first segment for vehicle {}. segment is {}",vehicleId,currentSegment);
+			outputCollector.emit(new Values(vehicleId,currentSegment.toString()));
 		}else{
 			if(currentSegment.get("segmentType").getAsString().equals(segmentType)){
 				//Should be the same segment -> Just update the last GPS and last time
 				currentSegment.addProperty("endTime", gps.get("readingTime").getAsLong());
 				currentSegment.addProperty("isNew", false);
-				currentSegments.put(angelId,currentSegment);
-				logger.info("Emit an update for existing segment segment for angel {}. segment is {}",angelId,currentSegment);
-				outputCollector.emit(new Values(angelId,currentSegment.toString()));
+				currentSegments.put(vehicleId,currentSegment);
+				logger.info("Emit an update for existing segment segment for vehicle {}. segment is {}",vehicleId,currentSegment);
+				outputCollector.emit(new Values(vehicleId,currentSegment.toString()));
 			}else{
 				//We will close current segment, and update the lat lon to the last gps, and create a new one
 				currentSegment.addProperty("isOpen", false);
 				currentSegment.addProperty("isNew", false);
 				currentSegment.addProperty("lat", gps.get("lat").getAsDouble());
 				currentSegment.addProperty("lon", gps.get("lon").getAsDouble());
-				logger.info("Closing a segment for angel {}. segment is {}",angelId,currentSegment);
-				outputCollector.emit(new Values(angelId,currentSegment.toString()));
+				logger.info("Closing a segment for vehicle {}. segment is {}",vehicleId,currentSegment);
+				outputCollector.emit(new Values(vehicleId,currentSegment.toString()));
 				
-				final JsonObject newSegment = buildSegment(angelId, gps, segmentType);				
-				currentSegments.put(angelId,newSegment);
-				logger.info("Creating a new segment for angel {}. segment is {}",angelId,newSegment);
-				outputCollector.emit(new Values(angelId,newSegment.toString()));
+				final JsonObject newSegment = buildSegment(vehicleId, gps, segmentType);				
+				currentSegments.put(vehicleId,newSegment);
+				logger.info("Creating a new segment for vehicle {}. segment is {}",vehicleId,newSegment);
+				outputCollector.emit(new Values(vehicleId,newSegment.toString()));
 			}
 		}		
 	}
 
-	private JsonObject buildSegment(final Integer angelId, final JsonObject gps, final String segmentType) {
+	private JsonObject buildSegment(final Integer vehicleId, final JsonObject gps, final String segmentType) {
 		JsonObject currentSegment;
 		currentSegment = new JsonObject();
 		currentSegment.addProperty("isOpen", true);
 		currentSegment.addProperty("isNew", true);
 		currentSegment.addProperty("_id", UUID.randomUUID().toString());
-		currentSegment.addProperty("angelId", angelId);
+		currentSegment.addProperty("vehicleId", vehicleId);
 		currentSegment.addProperty("startTime", gps.get("readingTime").getAsLong());
 		currentSegment.addProperty("endTime", gps.get("readingTime").getAsLong());
 		currentSegment.addProperty("segmentType", segmentType);

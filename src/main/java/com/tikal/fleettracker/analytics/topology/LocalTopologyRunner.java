@@ -1,11 +1,11 @@
-package com.tikal.angelsense.analytics.topology;
+package com.tikal.fleettracker.analytics.topology;
 
 import java.util.Properties;
 
-import com.tikal.angelsense.analytics.topology.bolts.GpsParserBolt;
-import com.tikal.angelsense.analytics.topology.bolts.RevGeocodeBolt;
-import com.tikal.angelsense.analytics.topology.bolts.SegmentationBolt;
-import com.tikal.angelsense.analytics.topology.spout.TextFileSpout;
+import com.tikal.fleettracker.analytics.topology.bolts.GpsParserBolt;
+import com.tikal.fleettracker.analytics.topology.bolts.RevGeocodeBolt;
+import com.tikal.fleettracker.analytics.topology.bolts.SegmentationBolt;
+import com.tikal.fleettracker.analytics.topology.spout.TextFileSpout;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
@@ -66,9 +66,9 @@ public class LocalTopologyRunner {
 		builder.setSpout("gpsSpout", getKafkaSpout());
 //		builder.setSpout("gpsSpout", getTextFileSpoutSpout());
 		builder.setBolt("gpsParserBolt", new GpsParserBolt()).shuffleGrouping("gpsSpout");
-		builder.setBolt("segmentation-bolt", new SegmentationBolt()).fieldsGrouping("gpsParserBolt",new Fields("angelId")).addConfigurations(segmentationConfig);
-		builder.setBolt("reverse-geocode-bolt", new RevGeocodeBolt()).fieldsGrouping("segmentation-bolt",new Fields("angelId")).addConfigurations(segmentationConfig);		
-		builder.setBolt("kafkaProducer",getKafkaBolt()).fieldsGrouping("reverse-geocode-bolt",new Fields("angelId")).addConfigurations(getKafkaBoltConfig());
+		builder.setBolt("segmentation-bolt", new SegmentationBolt()).fieldsGrouping("gpsParserBolt",new Fields("vehicleId")).addConfigurations(segmentationConfig);
+		builder.setBolt("reverse-geocode-bolt", new RevGeocodeBolt()).fieldsGrouping("segmentation-bolt",new Fields("vehicleId")).addConfigurations(segmentationConfig);		
+		builder.setBolt("kafkaProducer",getKafkaBolt()).fieldsGrouping("reverse-geocode-bolt",new Fields("vehicleId")).addConfigurations(getKafkaBoltConfig());
 		
 
 		return builder;
@@ -90,7 +90,7 @@ public class LocalTopologyRunner {
 	private static KafkaBolt<String, String> getKafkaBolt() {
 		return new KafkaBolt<String,String>()
 		.withTopicSelector(new DefaultTopicSelector(kafkaSegmentsTopicName))
-		.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("angelId","segment"));
+		.withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper<String, String>("vehicleId","segment"));
 	}
 	
 

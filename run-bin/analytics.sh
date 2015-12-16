@@ -8,7 +8,7 @@ export JAVA_OPTS="$JAVA_OPTS -DredisHost=localhost"
 export JAVA_OPTS="$JAVA_OPTS -DspeedTheshold=2"
 export JAVA_OPTS="$JAVA_OPTS -DgeoCoderUrl=http://localhost:7080/api/v1/address"
 
-echo "Starting AngelsSense Analytics with $JAVA_OPTS"
+echo "Starting VehiclesSense Analytics with $JAVA_OPTS"
 
 DIRNAME=`dirname $0`
 APP_HOME=`cd $DIRNAME/..;pwd;`

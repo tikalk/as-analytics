@@ -1,4 +1,4 @@
-# AngelSense Analytics
+# FleetTracker Analytics
 
 This microservice is the "brain" for the application. It's responsibility is to create new segments or update existing
 ones according to the input GPS. The GPS it consumes are read from the "gps" Kafka topic (fed by the gps-service), and it's output goes to yet another Kafka topic named "segments" (consumed by the segments-service)/ 

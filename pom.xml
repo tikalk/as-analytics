@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tikal.angelsense</groupId>
+    <groupId>com.tikal.fleettracker</groupId>
     <artifactId>as-analytics</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
@@ -101,7 +101,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.tikal.angelsense.analytics.topology.LocalTopologyRunner</mainClass>
+                            <mainClass>com.tikal.fleettracker.analytics.topology.LocalTopologyRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

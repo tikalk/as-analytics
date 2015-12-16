@@ -1,4 +1,4 @@
-package com.tikal.angelsense.analytics.topology.bolts;
+package com.tikal.fleettracker.analytics.topology.bolts;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.tikal.angelsense.analytics.utils.DistanceCalculator;
+import com.tikal.fleettracker.analytics.utils.DistanceCalculator;
 
 import backtype.storm.Constants;
 import backtype.storm.task.TopologyContext;
@@ -24,7 +24,7 @@ public class GpsParserBolt extends BaseBasicBolt {
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer fieldsDeclarer) {
-		fieldsDeclarer.declare(new Fields("angelId","gps"));
+		fieldsDeclarer.declare(new Fields("vehicleId","gps"));
 	}
 
 	
@@ -34,7 +34,7 @@ public class GpsParserBolt extends BaseBasicBolt {
 		final String str = tuple.getStringByField("str");
 		logger.info(str);
 		final JsonObject gps = new JsonParser().parse(str).getAsJsonObject();
-		outputCollector.emit(new Values(gps.get("angelId").getAsInt(),gps.toString()));
+		outputCollector.emit(new Values(gps.get("vehicleId").getAsInt(),gps.toString()));
 		
 	}
 	
