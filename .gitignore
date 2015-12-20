@@ -1,4 +1,6 @@
 *~
+maven-eclipse.xml
+.externalToolBuilders
 *.log
 /mods
 /logs
