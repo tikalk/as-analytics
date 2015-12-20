@@ -51,8 +51,10 @@ public class TextFileSpout extends BaseRichSpout {
 	public void nextTuple() {
 		try {
 			final String line = reader.readLine();
-			if (line != null)
+			if (line != null){
+				logger.info("line--->"+line);
 				collector.emit(new Values(line));
+			}
 			else
 				logger.info("Finished reading file");
 			Thread.sleep(1000);

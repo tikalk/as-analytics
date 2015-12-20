@@ -20,6 +20,8 @@ public class RevGeocodeBolt extends BaseBasicBolt {
 	private Webb webb;
 	private String geoCoderUrl;
 	
+	
+	
 
 	@Override
 	public void declareOutputFields(final OutputFieldsDeclarer fieldsDeclarer) {
