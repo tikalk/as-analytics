@@ -21,7 +21,7 @@ You also need to run the geo-coder facade is running
 Unzip the file as-analytics/target/anaytics.tgz
 cd to the created folder (anaytics)
 Run the following command : 
-./run-bun/analytics.sh
+./run-bin/analytics.sh
 
 
 

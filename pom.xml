@@ -13,9 +13,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <registerBaseName>${registerBaseUrl}</registerBaseName>
-        <dockerBranch>master</dockerBranch>
-        <dockerTag>prod</dockerTag>
+        <registerBaseName>localhost:5000</registerBaseName>
+        <dockerBranch>tikal</dockerBranch>
+        <dockerTag>latest</dockerTag>
 
     </properties>
 
@@ -38,7 +38,7 @@
 		<dependency>
             <groupId>org.apache.storm</groupId>
 	  		<artifactId>storm-kafka</artifactId>
-		  	<version>0.10.0</version>
+		  	<version>0.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
@@ -135,12 +135,44 @@
                 </executions>
 
             </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.8</version>
+            <executions>
+              <execution>
+                <id>attach-artifact</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <tar compression="gzip" destfile="target/analytics.tgz">
+                      <tarfileset mode="755" dir=".">
+                        <include name="run-bin/*.sh"/>
+                      </tarfileset>
+                      <tarfileset dir=".">
+                        <include name="target/as-analytics-1.0.0-jar-with-dependencies.jar"/>
+                      </tarfileset>
+                    </tar>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
 
             <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
                     <version>0.3.7</version>
-
+              <executions>
+              <execution>
+              <id>docker-build</id>
+              <phase>install</phase>
+              <goals>
+                <goal>build</goal>
+              </goals>
                 <configuration>
                             <imageName>${registerBaseName}/${dockerBranch}/${project.artifactId}:${dockerTag}</imageName>
                             <dockerDirectory>${project.build.directory}/docker</dockerDirectory>
@@ -153,33 +185,10 @@
                                 </resource>
                             </resources>
                         </configuration>
+              </execution>
+              </executions>
                     </plugin>
-             <plugin>
-		        <groupId>org.apache.maven.plugins</groupId>
-		        <artifactId>maven-antrun-plugin</artifactId>
-		        <version>1.8</version>
-		        <executions>
-		          <execution>
-		            <id>attach-artifact</id>
-		            <phase>install</phase>
-		            <goals>
-		              <goal>run</goal>
-		            </goals>
-		            <configuration>
-		              <target>
-		                 <tar compression="gzip" destfile="target/analytics.tgz">
-						  	<tarfileset mode="544" dir=".">
-						     	<include name="run-bin/*.sh"/>
-						  	</tarfileset>
-						  	<tarfileset dir=".">
-						     	<include name="target/as-analytics-1.0.0-jar-with-dependencies.jar"/>
-						  	</tarfileset>
-						</tar>
-		              </target>
-		            </configuration>
-		          </execution>
-		        </executions>
-		      </plugin>
+
             
         </plugins>
     </build>

@@ -6,10 +6,10 @@ ENV ANALYTICS_HOME /analytics
 EXPOSE 8080
 
 # Copy your fat jar to the container
-COPY analytics.tgz /
+ADD analytics.tgz $ANALYTICS_HOME
 
 # Launch the verticle
 WORKDIR $ANALYTICS_HOME
-ENTRYPOINT ["sh", "-c"]
-CMD ["$ANALYTICS_HOME/run-bun/analytics.sh"]
+#ENTRYPOINT ["sh", "-c"]
+CMD run-bin/analytics.sh
 

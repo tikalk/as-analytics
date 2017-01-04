@@ -1,12 +1,12 @@
 #!/bin/bash
 
-export JAVA_OPTS="-Dkafka_brokers_lists=localhost:9092"
-export JAVA_OPTS="$JAVA_OPTS -DzkHosts=localhost"
+export JAVA_OPTS="-Dkafka_brokers_lists=kafka:9092"
+export JAVA_OPTS="$JAVA_OPTS -DzkHosts=zookeeper"
 export JAVA_OPTS="$JAVA_OPTS -DkafkaGpsTopicName=as-gps"
 export JAVA_OPTS="$JAVA_OPTS -DkafkaSegmentsTopicName=as-segments"
-export JAVA_OPTS="$JAVA_OPTS -DredisHost=localhost"
+export JAVA_OPTS="$JAVA_OPTS -DredisHost=redis"
 export JAVA_OPTS="$JAVA_OPTS -DspeedTheshold=2"
-export JAVA_OPTS="$JAVA_OPTS -DgeoCoderUrl=http://localhost:7080/api/v1/address"
+export JAVA_OPTS="$JAVA_OPTS -DgeoCoderUrl=http://as-geocoder-facade:7080/api/v1/address"
 
 echo "Starting VehiclesSense Analytics with $JAVA_OPTS"
 
