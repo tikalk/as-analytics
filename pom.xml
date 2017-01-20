@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tikal.fleettracker</groupId>
-    <artifactId>as-analytics</artifactId>
+    <artifactId>ft-analytics</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>realtime-heatmap</name>
@@ -13,8 +13,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <registerBaseName>docker-registry.tikalk.com:5000</registerBaseName>
-        <dockerBranch>tikal</dockerBranch>
+        <registerBaseName></registerBaseName>
+        <dockerBranch>shelleg</dockerBranch>
         <dockerTag>latest</dockerTag>
 
     </properties>
@@ -153,7 +153,7 @@
                         <include name="run-bin/*.sh"/>
                       </tarfileset>
                       <tarfileset dir=".">
-                        <include name="target/as-analytics-1.0.0-jar-with-dependencies.jar"/>
+                        <include name="target/ft-analytics-1.0.0-jar-with-dependencies.jar"/>
                       </tarfileset>
                     </tar>
                   </target>
@@ -174,7 +174,7 @@
                 <goal>build</goal>
               </goals>
                 <configuration>
-                            <imageName>${registerBaseName}/${dockerBranch}/${project.artifactId}:${dockerTag}</imageName>
+                            <imageName>${registerBaseName}${dockerBranch}/${project.artifactId}:${dockerTag}</imageName>
                             <dockerDirectory>${project.build.directory}/docker</dockerDirectory>
 
                             <resources>

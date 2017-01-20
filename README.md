@@ -11,14 +11,14 @@ From the project home folder run the following command:
 mvn -DskipTests clean install
 
 This will create self contained zip, that you can unzip on host container. The output zip is located at
-as-analytics/target/anaytics.tgz
+ft-analytics/target/anaytics.tgz
 
 ## How to run
 --------------
 You must run ZooKeeper and Kafka, before you run this service
 You also need to run the geo-coder facade is running
 
-Unzip the file as-analytics/target/anaytics.tgz
+Unzip the file ft-analytics/target/anaytics.tgz
 cd to the created folder (anaytics)
 Run the following command : 
 ./run-bin/analytics.sh

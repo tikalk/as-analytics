@@ -1,12 +1,12 @@
 #!/bin/bash
 
-export JAVA_OPTS="-Dkafka_brokers_lists=as-kafka:9092"
-export JAVA_OPTS="$JAVA_OPTS -DzkHosts=as-zookeeper"
-export JAVA_OPTS="$JAVA_OPTS -DkafkaGpsTopicName=as-gps"
-export JAVA_OPTS="$JAVA_OPTS -DkafkaSegmentsTopicName=as-segments"
-export JAVA_OPTS="$JAVA_OPTS -DredisHost=as-redis"
+export JAVA_OPTS="-Dkafka_brokers_lists=ft-kafka:9092"
+export JAVA_OPTS="$JAVA_OPTS -DzkHosts=ft-zookeeper"
+export JAVA_OPTS="$JAVA_OPTS -DkafkaGpsTopicName=ft-gps"
+export JAVA_OPTS="$JAVA_OPTS -DkafkaSegmentsTopicName=ft-segments"
+export JAVA_OPTS="$JAVA_OPTS -DredisHost=ft-redis"
 export JAVA_OPTS="$JAVA_OPTS -DspeedTheshold=2"
-export JAVA_OPTS="$JAVA_OPTS -DgeoCoderUrl=http://as-geocoder-facade:7080/api/v1/address"
+export JAVA_OPTS="$JAVA_OPTS -DgeoCoderUrl=http://ft-geocoder-facade:7080/api/v1/address"
 
 echo "Starting VehiclesSense Analytics with $JAVA_OPTS"
 
@@ -17,4 +17,4 @@ export APP_HOME;
 
 
 
-java $JAVA_OPTS -jar $APP_HOME/target/as-analytics-1.0.0-jar-with-dependencies.jar
+java $JAVA_OPTS -jar $APP_HOME/target/ft-analytics-1.0.0-jar-with-dependencies.jar
